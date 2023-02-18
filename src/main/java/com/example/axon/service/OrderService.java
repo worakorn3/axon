@@ -8,6 +8,8 @@ import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 public class OrderService {
@@ -17,6 +19,7 @@ public class OrderService {
 
     public Mono<OrderResponse> order() {
         var orderCommand = new OrderCommand();
+        orderCommand.setOrderId(UUID.randomUUID().toString());
 
         commandGateway.send(orderCommand);
 

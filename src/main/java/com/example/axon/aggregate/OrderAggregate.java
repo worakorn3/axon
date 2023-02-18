@@ -14,8 +14,6 @@ import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.CreationPolicy;
 import org.axonframework.spring.stereotype.Aggregate;
 
-import java.util.UUID;
-
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
 @Aggregate(cache = "axon-cache")
@@ -31,10 +29,9 @@ public class OrderAggregate {
     @CommandHandler
     @CreationPolicy(AggregateCreationPolicy.ALWAYS)
     public void handle(OrderCommand command, EventGateway eventGateway) {
-        String uuid = UUID.randomUUID().toString();
-        log.info("Order received, generating orderId : {}", uuid);
+        log.info("Order received, generating orderId : {}", command.getOrderId());
         var event = new OrderReceivedEvent();
-        event.setOrderId(uuid);
+        event.setOrderId(command.getOrderId());
         apply(event);
     }
 
