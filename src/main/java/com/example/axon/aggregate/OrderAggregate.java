@@ -10,7 +10,6 @@ import com.example.axon.model.rest.OrderResponse;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
-import org.axonframework.eventhandling.gateway.EventGateway;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateCreationPolicy;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -33,7 +32,7 @@ public class OrderAggregate {
 
     @CommandHandler
     @CreationPolicy(AggregateCreationPolicy.ALWAYS)
-    public void handle(OrderCommand command, EventGateway eventGateway) {
+    public void handle(OrderCommand command) {
         log.info("Order received, generating orderId : {}", command.getOrderId());
         var event = new OrderReceivedEvent();
         event.setOrderId(command.getOrderId());
