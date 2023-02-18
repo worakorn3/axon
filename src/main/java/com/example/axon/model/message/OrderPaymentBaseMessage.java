@@ -1,4 +1,4 @@
-package com.example.axon.model;
+package com.example.axon.model.message;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

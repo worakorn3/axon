@@ -1,2 +1,10 @@
-package com.example.axon.model.message.command;public class OrderShipCommand {
+package com.example.axon.model.message.command;
+
+import com.example.axon.model.message.OrderBaseMessage;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class OrderShipCommand extends OrderBaseMessage {
 }

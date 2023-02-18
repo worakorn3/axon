@@ -1,6 +1,6 @@
-package com.example.axon.model.command;
+package com.example.axon.model.message.command;
 
-import com.example.axon.model.OrderBaseMessage;
+import com.example.axon.model.message.OrderBaseMessage;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

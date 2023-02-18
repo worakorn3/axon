@@ -1,6 +1,6 @@
-package com.example.axon.model.event;
+package com.example.axon.model.message.event;
 
-import com.example.axon.model.PaymentBaseMessage;
+import com.example.axon.model.message.PaymentBaseMessage;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
