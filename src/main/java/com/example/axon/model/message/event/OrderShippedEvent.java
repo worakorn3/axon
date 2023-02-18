@@ -7,4 +7,8 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class OrderShippedEvent extends OrderBaseMessage {
+
+    public String getOrderId() {
+        return super.getOrderId();
+    }
 }

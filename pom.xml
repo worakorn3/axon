@@ -25,6 +25,12 @@
 			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
 
+		<!--Reactor-->
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-core</artifactId>
+		</dependency>
+
 		<!--Database-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -41,6 +47,14 @@
 			<groupId>org.axonframework</groupId>
 			<artifactId>axon-spring-boot-starter</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.axonframework.extensions.reactor</groupId>
+			<artifactId>axon-reactor</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.axonframework.extensions.reactor</groupId>
+			<artifactId>axon-reactor-spring-boot-starter</artifactId>
+		</dependency>
 
         <!--Utility-->
 		<dependency>
@@ -48,6 +62,12 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>io.projectreactor.tools</groupId>
+			<artifactId>blockhound</artifactId>
+			<version>1.0.7.RELEASE</version>
+		</dependency>
+
 
 		<!--Test-->
 		<dependency>

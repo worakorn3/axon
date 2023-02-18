@@ -3,9 +3,7 @@ package com.example.axon.controller;
 import com.example.axon.model.rest.OrderResponse;
 import com.example.axon.service.OrderService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -18,5 +16,12 @@ public class HomeController {
     @PostMapping("/order")
     public Mono<OrderResponse> order() {
         return orderService.order();
+    }
+
+    @GetMapping("/order/{orderId}")
+    public Mono<OrderResponse> getOrder(
+            @PathVariable String orderId
+    ) {
+        return orderService.getOrder(orderId);
     }
 }
