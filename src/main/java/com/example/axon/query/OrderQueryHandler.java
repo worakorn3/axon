@@ -5,6 +5,7 @@ import com.example.axon.model.message.event.ResponseOrderUpdatedEvent;
 import com.example.axon.model.message.query.OrderQuery;
 import com.example.axon.model.rest.OrderResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.eventsourcing.EventSourcingRepository;
 import org.axonframework.queryhandling.QueryHandler;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@ProcessingGroup("query-group")
 public class OrderQueryHandler {
 
     private final EventSourcingRepository<OrderAggregate> repository;
