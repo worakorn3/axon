@@ -62,12 +62,6 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>io.projectreactor.tools</groupId>
-			<artifactId>blockhound</artifactId>
-			<version>1.0.7.RELEASE</version>
-		</dependency>
-
 
 		<!--Test-->
 		<dependency>

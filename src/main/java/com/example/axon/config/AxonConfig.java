@@ -3,6 +3,10 @@ package com.example.axon.config;
 import com.example.axon.aggregate.OrderAggregate;
 import org.axonframework.common.caching.Cache;
 import org.axonframework.common.caching.WeakReferenceCache;
+import org.axonframework.config.ConfigurerModule;
+import org.axonframework.config.EventProcessingConfigurer;
+import org.axonframework.eventhandling.tokenstore.TokenStore;
+import org.axonframework.eventhandling.tokenstore.jpa.JpaTokenStore;
 import org.axonframework.eventsourcing.EventSourcingRepository;
 import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.messaging.annotation.ParameterResolverFactory;
@@ -27,4 +31,10 @@ public class AxonConfig {
                 .parameterResolverFactory(factory)
                 .build();
     }
+
+    @Bean
+    public ConfigurerModule processorDefaultConfigurerModule() {
+        return configurer -> configurer.eventProcessing(EventProcessingConfigurer::usingPooledStreamingEventProcessors);
+    }
+
 }
