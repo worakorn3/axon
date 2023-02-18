@@ -1,6 +1,7 @@
 package com.example.axon.saga;
 
 import com.example.axon.model.message.command.OrderShipCommand;
+import com.example.axon.model.message.command.ResponseOrderUpdateCommand;
 import com.example.axon.model.message.event.OrderReceivedEvent;
 import com.example.axon.model.message.event.OrderShippedEvent;
 import com.example.axon.projection.ExternalRestApi;
@@ -43,9 +44,14 @@ public class ShopSaga {
 
         externalRestApi.callMessenger().flatMap(pickDate -> {
             log.info("Pick up date received at {} / Order to be picked up by messenger at {}", LocalDateTime.now(), pickDate);
-            var orderShipCommand = new OrderShipCommand();
-            orderShipCommand.setOrderId(this.orderId);
-            commandGateway.send(orderShipCommand);
+            // Response before let customer confirm order
+//            var orderShipCommand = new OrderShipCommand();
+//            orderShipCommand.setOrderId(this.orderId);
+//            commandGateway.send(orderShipCommand);
+
+            var responseUpdateCommand = new ResponseOrderUpdateCommand();
+            responseUpdateCommand.setOrderId(this.orderId);
+            commandGateway.send(responseUpdateCommand);
 
             return Mono.just("Success");
         }).subscribe();
