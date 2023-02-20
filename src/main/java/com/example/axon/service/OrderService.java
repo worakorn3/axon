@@ -1,12 +1,15 @@
 package com.example.axon.service;
 
 import com.example.axon.model.message.command.OrderCommand;
+import com.example.axon.model.message.event.ResponseOrderUpdatedEvent;
 import com.example.axon.model.message.query.OrderQuery;
 import com.example.axon.model.rest.OrderResponse;
 import com.example.axon.util.StringUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.config.ProcessingGroup;
+import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.extensions.reactor.queryhandling.gateway.ReactorQueryGateway;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,7 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 @Slf4j
+@ProcessingGroup("service-group")
 public class OrderService {
 
     private CommandGateway commandGateway;
@@ -51,5 +55,10 @@ public class OrderService {
         query.setOrderId(orderId);
 
         return queryGateway.subscriptionQuery(query, ResponseTypes.instanceOf(OrderResponse.class)).next();
+    }
+
+    @EventHandler
+    public void on(ResponseOrderUpdatedEvent event) {
+        log.info("Some more logic to work {} {}", event.getOrderId(), event.getOrderStatus());
     }
 }

@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   axonserver:
-    image: axoniq/axonserver
+    image: axoniq/axonserver:latest
     hostname: axonserver
     volumes:
       - axonserver-data:/data
@@ -13,6 +13,15 @@ services:
       - '8224:8224'
     networks:
       - axon-net
+
+  mysql:
+    image: mysql:latest
+    hostname: mysql
+    ports:
+      - '3306:3306'
+    networks:
+      - axon-net
+
 volumes:
   axonserver-data:
   axonserver-events:
