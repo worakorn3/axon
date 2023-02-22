@@ -1,0 +1,114 @@
+-- axon.association_value_entry definition
+
+CREATE TABLE `association_value_entry` (
+  `id` bigint(20) NOT NULL,
+  `association_key` varchar(255) NOT NULL,
+  `association_value` varchar(255) DEFAULT NULL,
+  `saga_id` varchar(255) NOT NULL,
+  `saga_type` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `IDXk45eqnxkgd8hpdn6xixn8sgft` (`saga_type`,`association_key`,`association_value`),
+  KEY `IDXgv5k1v2mh6frxuy5c0hgbau94` (`saga_id`,`saga_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- axon.association_value_entry_seq definition
+
+CREATE TABLE `association_value_entry_seq` (
+  `next_val` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- axon.dead_letter_entry definition
+
+CREATE TABLE `dead_letter_entry` (
+  `dead_letter_id` varchar(255) NOT NULL,
+  `cause_message` varchar(255) DEFAULT NULL,
+  `cause_type` varchar(255) DEFAULT NULL,
+  `diagnostics` blob DEFAULT NULL,
+  `enqueued_at` datetime NOT NULL,
+  `last_touched` datetime DEFAULT NULL,
+  `aggregate_identifier` varchar(255) DEFAULT NULL,
+  `event_identifier` varchar(255) NOT NULL,
+  `message_type` varchar(255) NOT NULL,
+  `meta_data` blob DEFAULT NULL,
+  `payload` blob NOT NULL,
+  `payload_revision` varchar(255) DEFAULT NULL,
+  `payload_type` varchar(255) NOT NULL,
+  `sequence_number` bigint(20) DEFAULT NULL,
+  `time_stamp` varchar(255) NOT NULL,
+  `token` blob DEFAULT NULL,
+  `token_type` varchar(255) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `processing_group` varchar(255) NOT NULL,
+  `processing_started` datetime DEFAULT NULL,
+  `sequence_identifier` varchar(255) NOT NULL,
+  `sequence_index` bigint(20) NOT NULL,
+  PRIMARY KEY (`dead_letter_id`),
+  KEY `IDXe67wcx5fiq9hl4y4qkhlcj9cg` (`processing_group`),
+  KEY `IDXrwucpgs6sn93ldgoeh2q9k6bn` (`processing_group`,`sequence_identifier`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- axon.domain_event_entry definition
+
+CREATE TABLE `domain_event_entry` (
+  `global_index` bigint(20) NOT NULL,
+  `event_identifier` varchar(255) NOT NULL,
+  `meta_data` blob DEFAULT NULL,
+  `payload` blob NOT NULL,
+  `payload_revision` varchar(255) DEFAULT NULL,
+  `payload_type` varchar(255) NOT NULL,
+  `time_stamp` varchar(255) NOT NULL,
+  `aggregate_identifier` varchar(255) NOT NULL,
+  `sequence_number` bigint(20) NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`global_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- axon.domain_event_entry_seq definition
+
+CREATE TABLE `domain_event_entry_seq` (
+  `next_val` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- axon.saga_entry definition
+
+CREATE TABLE `saga_entry` (
+  `saga_id` varchar(255) NOT NULL,
+  `revision` varchar(255) DEFAULT NULL,
+  `saga_type` varchar(255) DEFAULT NULL,
+  `serialized_saga` blob DEFAULT NULL,
+  PRIMARY KEY (`saga_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- axon.snapshot_event_entry definition
+
+CREATE TABLE `snapshot_event_entry` (
+  `aggregate_identifier` varchar(255) NOT NULL,
+  `sequence_number` bigint(20) NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `event_identifier` varchar(255) NOT NULL,
+  `meta_data` blob DEFAULT NULL,
+  `payload` blob NOT NULL,
+  `payload_revision` varchar(255) DEFAULT NULL,
+  `payload_type` varchar(255) NOT NULL,
+  `time_stamp` varchar(255) NOT NULL,
+  PRIMARY KEY (`aggregate_identifier`,`sequence_number`,`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- axon.token_entry definition
+
+CREATE TABLE `token_entry` (
+  `processor_name` varchar(255) NOT NULL,
+  `segment` int(11) NOT NULL,
+  `owner` varchar(255) DEFAULT NULL,
+  `timestamp` varchar(255) NOT NULL,
+  `token` blob DEFAULT NULL,
+  `token_type` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`processor_name`,`segment`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
