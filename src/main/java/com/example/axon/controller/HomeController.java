@@ -20,9 +20,24 @@ public class HomeController {
 
     private final OrderService orderService;
 
-    @PostMapping("/order/{waitingTime}")
+    @PostMapping("/v1/order/{waitingTime}")
     public Mono<OrderResponse> order(@PathVariable int waitingTime) {
         return orderService.order()
+                .subscribeOn(Schedulers.boundedElastic())
+                .timeout(Duration.ofMillis(waitingTime), Mono.defer(() -> {
+                    log.warn("Order not in time... send fallback instead");
+                    OrderResponse fallback = new OrderResponse();
+                    fallback.setStatus(OrderStatus.ORDER_PENDING);
+                    return Mono.just(fallback);
+                }))
+                .doOnError(ex -> {
+                    log.error("", ex);
+                });
+    }
+
+    @PostMapping("/v2/order/{waitingTime}")
+    public Mono<OrderResponse> orderReactive(@PathVariable int waitingTime) {
+        return orderService.orderReactive()
                 .subscribeOn(Schedulers.boundedElastic())
                 .timeout(Duration.ofMillis(waitingTime), Mono.defer(() -> {
                     log.warn("Order not in time... send fallback instead");

@@ -12,11 +12,13 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
+import org.axonframework.extensions.reactor.eventhandling.gateway.ReactorEventGateway;
 import org.axonframework.modelling.command.AggregateCreationPolicy;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.CreationPolicy;
 import org.axonframework.spring.stereotype.Aggregate;
 import org.springframework.context.annotation.Profile;
+import reactor.core.publisher.Mono;
 
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
@@ -24,8 +26,8 @@ import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 @NoArgsConstructor
 @Slf4j
 @Getter
-@Profile({"default", "first", "second", "third"})
-public class OrderAggregate {
+@Profile("reactive")
+public class OrderAggregateReactive {
 
     @AggregateIdentifier
     private String orderId;
@@ -35,11 +37,13 @@ public class OrderAggregate {
 
     @CommandHandler
     @CreationPolicy(AggregateCreationPolicy.ALWAYS)
-    public void handle(OrderCommand command) {
+    public Mono<Void> handle(OrderCommand command, ReactorEventGateway reactorEventGateway) {
         log.info("Order received, generating orderId : {}", command.getOrderId());
         var event = new OrderReceivedEvent();
         event.setOrderId(command.getOrderId());
         apply(event);
+
+        return Mono.empty();
     }
 
     @EventSourcingHandler
@@ -50,27 +54,31 @@ public class OrderAggregate {
     }
 
     @CommandHandler
-    public void handle(ResponseOrderUpdateCommand command) {
+    public Mono<Void> handle(ResponseOrderUpdateCommand command) {
         var event = new ResponseOrderUpdatedEvent();
         event.setOrderId(command.getOrderId());
         event.setOrderStatus(this.orderStatus);
         apply(event);
+
+        return Mono.empty();
     }
 
     /*
     * Used in Confirm payment flow
      */
     @CommandHandler
-    public void handle(OrderShipCommand command) {
+    public Mono<Void> handle(OrderShipCommand command) {
         if (this.shipped) {
             log.warn("Order {} already out for shipping", command.getOrderId());
-            return;
+            return Mono.empty();
         }
 
         log.info("Messenger picked up order {}", command.getOrderId());
         var orderShippedEvent = new OrderShippedEvent();
         orderShippedEvent.setOrderId(command.getOrderId());
         apply(orderShippedEvent);
+
+        return Mono.empty();
     }
 
     @EventSourcingHandler

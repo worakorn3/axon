@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
+import org.axonframework.extensions.reactor.commandhandling.gateway.ReactorCommandGateway;
 import org.axonframework.extensions.reactor.queryhandling.gateway.ReactorQueryGateway;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,8 @@ public class OrderService {
 
     private CommandGateway commandGateway;
     private ReactorQueryGateway queryGateway;
+
+    private ReactorCommandGateway reactorCommandGateway;
 
     public Mono<OrderResponse> order() {
         return StringUtil.generateUUID()
@@ -46,6 +49,32 @@ public class OrderService {
                                 .doOnNext(n -> log.info("Next {}", n))
                                 .doOnSuccess(s -> log.info("Success {}", s))
                                 .doOnError(err -> log.error("Error", err));
+                })
+                .doOnError(err -> log.error("Error: ", err));
+    }
+
+    public Mono<OrderResponse> orderReactive() {
+        return StringUtil.generateUUID()
+                .flatMap(uuid -> {
+                    var orderCommand = new OrderCommand();
+                    orderCommand.setOrderId(UUID.randomUUID().toString());
+
+                    return Mono.just(orderCommand);
+                })
+                .flatMap(cmd -> {
+                    var query = new OrderQuery();
+                    query.setOrderId(cmd.getOrderId());
+
+                    return Mono.zip(
+                            reactorCommandGateway.send(cmd)
+                                    .switchIfEmpty(Mono.just("Done")),
+                            queryGateway.queryUpdates(query, ResponseTypes.instanceOf(OrderResponse.class)).next()
+                                    .subscribeOn(Schedulers.boundedElastic())
+                                    .doOnNext(n -> log.info("Next {}", n))
+                                    .doOnSuccess(s -> log.info("Success {}", s))
+                                    .doOnError(err -> log.error("Error", err))
+                    )
+                    .flatMap(tuple -> Mono.defer(() -> Mono.just(tuple.getT2())));
                 })
                 .doOnError(err -> log.error("Error: ", err));
     }

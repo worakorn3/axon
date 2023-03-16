@@ -1,6 +1,8 @@
 package com.example.axon.config;
 
 import com.example.axon.aggregate.OrderAggregate;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.commandhandling.DuplicateCommandHandlerResolver;
 import org.axonframework.commandhandling.SimpleCommandBus;
@@ -16,6 +18,7 @@ import org.axonframework.tracing.SpanFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import java.util.concurrent.Executors;
 
@@ -25,6 +28,16 @@ public class AxonConfig {
     @Bean("axon-cache")
     public Cache axonCache() {
         return new WeakReferenceCache();
+    }
+
+    @Primary
+    @Bean("axon-xtream")
+    public XStream xStream() {
+        XStream xStream = new XStream();
+        xStream.addPermission(AnyTypePermission.ANY);
+        xStream.allowTypeHierarchy(Object.class);
+        xStream.allowTypesByWildcard(new String[] { "com.example.axon.**" });
+        return xStream;
     }
 
     @Bean("orderAggregateRepository")
@@ -57,12 +70,10 @@ public class AxonConfig {
             DuplicateCommandHandlerResolver resolver,
             SpanFactory factory
     ) {
-        SimpleCommandBus bus = SimpleCommandBus.builder()
+        return SimpleCommandBus.builder()
                 .duplicateCommandHandlerResolver(resolver)
                 .messageMonitor(configuration.messageMonitor(CommandBus.class, "commandBus"))
                 .spanFactory(factory)
                 .build();
-
-        return bus;
     }
 }
