@@ -5,6 +5,9 @@ import com.example.axon.model.message.command.ResponseOrderUpdateCommand;
 import com.example.axon.model.message.event.OrderReceivedEvent;
 import com.example.axon.model.message.event.OrderShippedEvent;
 import com.example.axon.projection.ExternalRestApi;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.config.ProcessingGroup;
@@ -18,15 +21,18 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
-@Saga
+@Saga(sagaStore = "cachingSagaStore")
 @Slf4j
 @ProcessingGroup("shop-saga-group")
+@Getter
 public class ShopSaga {
 
     @Autowired
+    @JsonIgnore
     private transient CommandGateway commandGateway;
 
     @Autowired
+    @JsonIgnore
     private transient ExternalRestApi externalRestApi;
 
     private boolean paid = false;
@@ -45,9 +51,9 @@ public class ShopSaga {
         externalRestApi.callMessenger().flatMap(pickDate -> {
             log.info("Pick up date received at {} / Order to be picked up by messenger at {}", LocalDateTime.now(), pickDate);
             // Response before let customer confirm order
-//            var orderShipCommand = new OrderShipCommand();
-//            orderShipCommand.setOrderId(this.orderId);
-//            commandGateway.send(orderShipCommand);
+            var orderShipCommand = new OrderShipCommand();
+            orderShipCommand.setOrderId(this.orderId);
+            commandGateway.send(orderShipCommand);
 
             var responseUpdateCommand = new ResponseOrderUpdateCommand();
             responseUpdateCommand.setOrderId(this.orderId);
@@ -59,6 +65,7 @@ public class ShopSaga {
 
     @EndSaga
     @SagaEventHandler(associationProperty = "orderId")
+    @SneakyThrows
     public void on(OrderShippedEvent event) {
         if (paid) {
             log.warn("Order already paid, ending saga");
@@ -69,5 +76,7 @@ public class ShopSaga {
 
         log.info("Order {} out for shipping", event.getOrderId());
         this.shipped = true;
+
+        Thread.sleep(1000);
     }
 }
